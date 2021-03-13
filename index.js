@@ -289,50 +289,6 @@ app.delete('/delete-movie/:imdbID', async function(req, res) {
 
 
 
-// app.post('/', async function (req, res) {
-//   const cars = await req.db.query(
-//     `INSERT INTO car (
-//       make_id,
-//       model,
-//       date_created
-//       ) VALUES (
-//         :make_id,
-//         :model,
-//         NOW()
-//       )`,
-//     {
-//       make_id: req.body.make_id,
-//       model: req.body.model
-//     }
-//   );
-
-//   res.json(cars)
-// })
-
-// app.put('/:id', async function (req, res) {
-//   // example request body:
-//   // {
-//   //   "model": "Accord"
-//   // }
-//   const [cars] = await req.db.query(`
-//     UPDATE car SET model = :model WHERE id = :id
-//   `, {
-//     model: req.body.model,
-//     id: req.params.id
-//   });
-
-//   res.json(cars);
-// })
-
-// app.delete('/:id', async function (req, res) {
-//   const [cars] = await req.db.query(`
-//     DELETE FROM car WHERE id = :id
-//   `, {
-//     id: req.params.id
-//   });
-
-//   res.json(cars);
-// })
 
 
 app.listen(port, () => console.log(`movie-db-api listening at http://localhost:${port}`));
