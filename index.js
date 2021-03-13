@@ -192,72 +192,72 @@ app.use(async function verifyJwt(req, res, next) {
   await next();
 });
 
-app.get('/email', async function(req, res) {
+
+// Library table
+app.get("/user-library", async function (req, res) {
   try {
-    console.log('/email success!', req.user);
-    const email = await req.db.query (
-      `SELECT * FROM users WHERE email = :email`,
+    const [movies] = await req.db.query(
+      `SELECT * FROM user_library WHERE email = :userEmail`,
       {
-        usersEmail: req.user.email
-      });
-      res.json(email);
-  } catch(err){
-    res.json('Error fetching emails', err)
-    console.log('Error in/emails')
+        userEmail: req.user.email,
+      }
+    );
 
+    return res.json({
+      data: movies,
+      error: false,
+      msg: "Fetched movies",
+    });
+  } catch (err) {
+    console.log("Error in /movies", err);
+    res.json({
+      data: null,
+      error: true,
+      msg: "Error fetching movies",
+    });
   }
-
 });
 
-app.put('/user-library', async function(req, res) {
+app.put('/save', async function(req, res) {
   try {
     await req.db.query(
-      `INSERT INTO user-library (
+      `INSERT INTO user_library (
         email,
         imdbID,
         title,
-        year,
+        poster
       ) VALUES (
         :email,
         :imdbID,
         :title,
-        :year,
-        NOW()
-      )`,
+        :poster
+      );`,
+
       {
-        email: req.email.body,
+        email: req.user.email,
         imdbID: req.body.imdbID,
-        subject: req.body.subject,
+        title: req.body.title,
+        poster: req.body.poster,
         body: req.body.body
       }
     );
 
-    res.json('/library save success!');
+    res.json('/movie save success!');
 
       }  catch (err) {
-    console.log('Error in /library', err);
+    console.log('Error in /save', err);
     res.json('Error sending movie');
   }
   return;
 });
 
+
+
 app.post('/user-library', async function(req, res) {
   try {
-    console.log('/Library save success!')
+    console.log('/movie save success!')
 
-    res.json('/user library success!')
-
-  } catch(err){
-
-  }
-
-});
-
-app.delete('/user-library', async function(req, res) {
-  try {
-    console.log('/movie deleted!')
-
-    res.json('/movie deleted success!')
+    res.json('/user movie success!')
 
   } catch(err){
 
@@ -265,99 +265,29 @@ app.delete('/user-library', async function(req, res) {
 
 });
 
-//may not need this functionality, personal endpoints depending on project
-// app.get('/email', async function(req, res) {
-//   try {
-//     console.log('/emails success!', req.user);
-//     const [email] = await req.db.query(
-//       `SELECT
-//         id,
-//         sent_from AS sentFrom,
-//         sent_to AS sentTo,
-//         subject,
-//         body,
-//         time_stamp AS timeStamp
-//       FROM emails WHERE sent_to = :userEmail`,
-//       {
-//         userEmail: req.user.email
-//       }
-//     );
 
-//     res.json({
-//       data: emails,
-//       error: false,
-//       msg: ''
-//     });
-//   } catch (err) {
-//     console.log('Error in /emails', err);
-//     res.json({
-//       data: null,
-//       error: true,
-//       msg: 'Error fetching emails'
-//     });
-//   }
-// });
 
-// app.put('/email', async function(req, res) {
-//   try {
-//     await req.db.query(
-//       `INSERT INTO email (
-//         sent_from,
-//         sent_to,
-//         subject,
-//         body,
-//         time_stamp
-//       ) VALUES (
-//         :from,
-//         :recipient,
-//         :subject,
-//         :body,
-//         NOW()
-//       )`,
-//       {
-//         from: req.body.from,
-//         recipient: req.body.recipient,
-//         subject: req.body.subject,
-//         body: req.body.body
-//       }
-//     );
+app.delete('/delete-movie/:imdbID', async function(req, res) {
+    try {
+      await req.db.query (
+        `DELETE FROM user_library WHERE imdbID = :imdbID AND email = :email`,
 
-//     res.json('/email success!');
-//   } catch (err) {
-//     console.log('Error in /email', err);
-//     res.json('Error sending email');
-//   }
-// });
+     {
+       imdbID: req.params.imdbID,
+       email: req.user.email,
 
-// app.post('/email', async function(req, res) {
-//   try {
-//     console.log('/emails success!');
+      }
+      );
 
-//     res.json('/emails success!')
-//   } catch (err) {
+    res.json('/deleted success!');
+  } catch(err){
+    console.log('Error in /delete', err);
+    res.json('Error deleting movie');
 
-//   }
-// });
+  }
+  });
 
-// app.delete('/emails', async function(req, res) {
-//   try {
-//     console.log('/emails success!');
 
-//     res.json('/emails success!')
-//   } catch (err) {
-
-//   }
-// });
-
-// const [[cars]] = await req.db.query(
-//     `SELECT model FROM car WHERE id = :id`,
-//     {
-//       id: req.params.id
-//     }
-//   );
-
-//   res.json(cars);
-// })
 
 // app.post('/', async function (req, res) {
 //   const cars = await req.db.query(
